@@ -1,5 +1,3 @@
-const siteConfig = require('./config.js');
-
 module.exports = {
   siteMetadata: {
     title: `アルミ缶の上にあるミカン`,
