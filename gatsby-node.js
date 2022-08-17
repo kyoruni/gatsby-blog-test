@@ -6,6 +6,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   // Define a template for blog post
   const blogPost = path.resolve(`./src/templates/blog-post.js`)
+  const Page = path.resolve(`./src/templates/page.js`)
 
   // Get all markdown blog posts sorted by date
   const result = await graphql(
@@ -19,6 +20,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
             id
             fields {
               slug
+            }
+            frontmatter {
+              template
             }
           }
         }
@@ -34,7 +38,9 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     return
   }
 
-  const posts = result.data.allMarkdownRemark.nodes
+  const nodes = result.data.allMarkdownRemark.nodes
+  const posts = nodes.filter(node => node.frontmatter.template === 'post')
+  const pages = nodes.filter(node => node.frontmatter.template === 'page')
 
   // Create blog posts pages
   // But only if there's at least one markdown file found at "content/blog" (defined in gatsby-config.js)
@@ -42,6 +48,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   if (posts.length > 0) {
     posts.forEach((post, index) => {
+
       const previousPostId = index === 0 ? null : posts[index - 1].id
       const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
 
@@ -52,6 +59,18 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
           id: post.id,
           previousPostId,
           nextPostId,
+        },
+      })
+    })
+  }
+
+  if (pages.length > 0) {
+    pages.forEach(page => {
+      createPage({
+        path: page.fields.slug,
+        component: Page,
+        context: {
+          id: page.id,
         },
       })
     })
@@ -72,44 +91,45 @@ exports.onCreateNode = ({ node, actions, getNode }) => {
   }
 }
 
-exports.createSchemaCustomization = ({ actions }) => {
-  const { createTypes } = actions
+// exports.createSchemaCustomization = ({ actions }) => {
+//   const { createTypes } = actions
 
-  // Explicitly define the siteMetadata {} object
-  // This way those will always be defined even if removed from gatsby-config.js
+//   // Explicitly define the siteMetadata {} object
+//   // This way those will always be defined even if removed from gatsby-config.js
 
-  // Also explicitly define the Markdown frontmatter
-  // This way the "MarkdownRemark" queries will return `null` even when no
-  // blog posts are stored inside "content/blog" instead of returning an error
-  createTypes(`
-    type SiteSiteMetadata {
-      author: Author
-      siteUrl: String
-      social: Social
-    }
+//   // Also explicitly define the Markdown frontmatter
+//   // This way the "MarkdownRemark" queries will return `null` even when no
+//   // blog posts are stored inside "content/blog" instead of returning an error
+//   createTypes(`
+//     type SiteSiteMetadata {
+//       author: Author
+//       siteUrl: String
+//       social: Social
+//     }
 
-    type Author {
-      name: String
-      summary: String
-    }
+//     type Author {
+//       name: String
+//       summary: String
+//     }
 
-    type Social {
-      twitter: String
-    }
+//     type Social {
+//       twitter: String
+//     }
 
-    type MarkdownRemark implements Node {
-      frontmatter: Frontmatter
-      fields: Fields
-    }
+//     type MarkdownRemark implements Node {
+//       frontmatter: Frontmatter
+//       fields: Fields
+//     }
 
-    type Frontmatter {
-      title: String
-      description: String
-      date: Date @dateformat
-    }
+//     type Frontmatter {
+//       title: String
+//       description: String
+//       date: Date @dateformat
+//       template: String
+//     }
 
-    type Fields {
-      slug: String
-    }
-  `)
-}
+//     type Fields {
+//       slug: String
+//     }
+//   `)
+// }

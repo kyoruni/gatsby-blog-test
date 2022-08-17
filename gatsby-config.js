@@ -1,3 +1,5 @@
+const siteConfig = require('./config.js');
+
 module.exports = {
   siteMetadata: {
     title: `アルミ缶の上にあるミカン`,
@@ -10,13 +12,14 @@ module.exports = {
     social: {
       twitter: `kylemathews`,
     },
+    menu: siteConfig.menu,
   },
   plugins: [
     `gatsby-plugin-image`,
     {
       resolve: `gatsby-source-filesystem`,
       options: {
-        path: `${__dirname}/content/blog`,
+        path: `${__dirname}/content`,
         name: `blog`,
       },
     },
