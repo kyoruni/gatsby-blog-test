@@ -1,5 +1,6 @@
 ---
 title: テスト
+description: "あいうえお"
 template: "page"
 ---
 

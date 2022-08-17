@@ -1,6 +1,6 @@
 ---
 title: このブログについて
-date: "2022-08-14"
+description: "おはようございます"
 template: "page"
 ---
 
