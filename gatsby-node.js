@@ -5,8 +5,8 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
   const { createPage } = actions
 
   // Define a template for blog post
-  const blogPost = path.resolve(`./src/templates/blog-post.js`)
-  const Page = path.resolve(`./src/templates/page.js`)
+  const postTemplate = path.resolve(`./src/templates/blog-post.js`)
+  const pageTemplate = path.resolve(`./src/templates/page.js`)
 
   // Get all markdown blog posts sorted by date
   const result = await graphql(
@@ -48,13 +48,12 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
 
   if (posts.length > 0) {
     posts.forEach((post, index) => {
-
       const previousPostId = index === 0 ? null : posts[index - 1].id
       const nextPostId = index === posts.length - 1 ? null : posts[index + 1].id
 
       createPage({
         path: post.fields.slug,
-        component: blogPost,
+        component: postTemplate,
         context: {
           id: post.id,
           previousPostId,
@@ -68,7 +67,7 @@ exports.createPages = async ({ graphql, actions, reporter }) => {
     pages.forEach(page => {
       createPage({
         path: page.fields.slug,
-        component: Page,
+        component: pageTemplate,
         context: {
           id: page.id,
         },
