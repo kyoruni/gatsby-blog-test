@@ -12,7 +12,16 @@ module.exports = {
     social: {
       twitter: `kylemathews`,
     },
-    menu: siteConfig.menu,
+    menu: [
+      {
+        label: 'このブログについて',
+        path: '/pages/about'
+      },
+      {
+        label: 'テスト',
+        path: '/pages/test'
+      }
+    ]
   },
   plugins: [
     `gatsby-plugin-image`,
